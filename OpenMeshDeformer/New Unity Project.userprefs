@@ -1,0 +1,15 @@
+﻿<Properties>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" ActiveRuntime="Mono 2.10.9 (tarball)&#xD;&#xA;Copyright)" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\userScripts\MeshXT2.cs">
+    <Files>
+      <File FileName="Assets\userScripts\MeshXT2.cs" Line="269" Column="10" />
+      <File FileName="Assets\userScripts\MeshXTinternal.cs" Line="1" Column="1" />
+      <File FileName="Assets\userScripts\AnyMesh.cs" Line="22" Column="124" />
+      <File FileName="Assets\userScripts\MathXT.cs" Line="1" Column="1" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>
