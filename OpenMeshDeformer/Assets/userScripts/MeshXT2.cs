@@ -7,7 +7,6 @@ using System.Diagnostics;
 using System.Net.Mime;
 using System.Collections.Generic;
 
-
 public class MeshXT2{
 	public volatile Mesh mesh;
 	public volatile Vector3[] vertices;
@@ -21,62 +20,135 @@ public class MeshXT2{
 	Troschuetz.Random.Generator gen;
 	Troschuetz.Random.Distribution dist = null;
 	public delegate void nextStepDelegate();
-	public MeshXT2()
-	{
-		if(Camera.mainCamera.gameObject.GetComponent<MeshXTinternal>()==null)
-		{
-			internalObj = Camera.mainCamera.gameObject.AddComponent<MeshXTinternal> ();
-		}
-		else
-		{
-			internalObj = Camera.mainCamera.gameObject.GetComponent<MeshXTinternal>();
-		}
-		gen = new MT19937Generator(0);
-	}
-	public MeshXT2(int seed)
-	{
-		if(Camera.mainCamera.gameObject.GetComponent<MeshXTinternal>()==null)
-		{
-			internalObj = Camera.mainCamera.gameObject.AddComponent<MeshXTinternal> ();
-		}
-		else
-		{
-			internalObj = Camera.mainCamera.gameObject.GetComponent<MeshXTinternal>();
-		}
-		gen = new MT19937Generator(seed);
-	}
-	public enum generators {ALF, MT19937, Standard, XorShift};
-	public MeshXT2(int seed, generators genx)
-	{
-		if(Camera.mainCamera.gameObject.GetComponent<MeshXTinternal>()==null)
-		{
-			internalObj = Camera.mainCamera.gameObject.AddComponent<MeshXTinternal> ();
-		}
-		else
-		{
-			internalObj = Camera.mainCamera.gameObject.GetComponent<MeshXTinternal>();
-		}
-		switch(genx)
-		{
-		case generators.MT19937:
-			gen = new MT19937Generator(seed);
-			break;
-		case generators.ALF:
-			gen = new ALFGenerator(seed);
-			break;
-		case generators.Standard:
-			gen = new StandardGenerator(seed);
-			break;
-		case generators.XorShift:
-			gen = new XorShift128Generator(seed);
-			break;
-		}
+	public MeshXT2() : this(0, MeshXT2.generators.MT19937){}
 
-	}
-	public enum distributions {Bernoili, Beta, BetaPrime, Cauchy, Chi, ChiSquared,
-		ContinuousUniform, DiscreteUniform, Erlang, Exponential, FisherSnedecor, FisherTippett,
-	Gamma, Geometric, Laplace, LogNormal, Normal, Pareto, Poisson, Power, RayLeigh, StudentsT,
-		Triangular, WeiBull };
+	public MeshXT2(int seed) : this (seed, MeshXT2.generators.MT19937){}
+
+	public enum generators {ALF, MT19937, Standard, XorShift};
+
+	public MeshXT2(int seed, generators genx) : this(seed, genx, MeshXT2.distributions.None, null){}
+
+	public enum distributions {
+		/// <summary>
+		/// The bernoili distribution alpha is desired error level
+		/// http://en.wikibooks.org/wiki/Statistics/Distributions/Bernoulli
+		///  1= alpha
+		/// 0 = 1-alpha
+		/// </summary>
+		Bernoili,
+		/// <summary>
+		/// The beta dist mean ~= alpha/(alpha + beta)
+		/// http://stats.stackexchange.com/questions/47771/what-is-intuition-behind-beta-distribution
+		/// </summary>
+		Beta, 
+		/// <summary>
+		/// The beta prime.
+		/// http://en.wikipedia.org/wiki/Beta_prime_distribution
+		/// </summary>
+		BetaPrime,
+		/// <summary>
+		/// The binomial.
+		/// http://en.wikipedia.org/wiki/Binomial_distribution
+		/// </summary>
+		Binomial,
+		/// <summary>
+		/// The cauchy.
+		/// </summary>
+		Cauchy,
+		/// <summary>
+		/// The chi.
+		/// </summary>
+		Chi, 
+		/// <summary>
+		/// The chi squared.
+		/// </summary>
+		ChiSquared,
+		/// <summary>
+		/// The continuous uniform.
+		/// </summary>
+		ContinuousUniform,
+		/// <summary>
+		/// The discrete uniform.
+		/// </summary>
+		DiscreteUniform, 
+		/// <summary>
+		/// The erlang.
+		/// </summary>
+		Erlang, 
+		/// <summary>
+		/// The exponential.
+		/// </summary>
+		Exponential, 
+		/// <summary>
+		/// The fisher snedecor.
+		/// </summary>
+		FisherSnedecor, 
+		/// <summary>
+		/// The fisher tippett.
+		/// </summary>
+		FisherTippett,
+		/// <summary>
+		/// The gamma.
+		/// </summary>
+		Gamma, 
+		/// <summary>
+		/// The geometric.
+		/// </summary>
+		Geometric, 
+		/// <summary>
+		/// The laplace.
+		/// </summary>
+		Laplace, 
+		/// <summary>
+		/// The log normal.
+		/// </summary>
+		LogNormal,
+		/// <summary>
+		/// no distribution will be set
+		/// </summary>
+		None,
+		/// <summary>
+		/// The normal.
+		/// </summary>
+		Normal, 
+		/// <summary>
+		/// The pareto.
+		/// </summary>
+		Pareto, 
+		/// <summary>
+		/// The poisson.
+		/// </summary>
+		Poisson, 
+		/// <summary>
+		/// The power.
+		/// </summary>
+		Power, 
+		/// <summary>
+		/// The ray leigh.
+		/// </summary>
+		RayLeigh, 
+		/// <summary>
+		/// The students t.
+		/// </summary>
+		StudentsT,
+		/// <summary>
+		/// The triangular.
+		/// </summary>
+		Triangular, 
+		/// <summary>
+		/// The wei bull.
+		/// </summary>
+		WeiBull };
+	/// <summary>
+	/// Initializes a new instance of the <see cref="MeshXT2"/> class.
+	/// while specifying the seed, generator and distribution to use as well as the 
+	/// parameters for the distribution alpha corrosponds to p the amount of error in the 
+	/// distribution generally smaller means less variance
+	/// </summary>
+	/// <param name="seed">Seed.</param>
+	/// <param name="genx">Genx.</param>
+	/// <param name="distx">Distx.</param>
+	/// <param name="args">Arguments.</param>
 	public MeshXT2(int seed, generators genx, distributions distx, Dictionary<string, double> args)
 	{
 		if(Camera.mainCamera.gameObject.GetComponent<MeshXTinternal>()==null)
@@ -102,6 +174,7 @@ public class MeshXT2{
 			gen = new XorShift128Generator(seed);
 			break;
 		}
+
 		switch(distx)
 		{
 		case distributions.Bernoili:
@@ -194,8 +267,8 @@ public class MeshXT2{
 			DiscreteUniformDistribution x7 = new DiscreteUniformDistribution(gen);
 			if(args.ContainsKey("alpha") && args.ContainsKey("beta"))
 			{
-				x7.Alpha = args["alpha"];
-				x7.Beta = args["beta"];
+				x7.Alpha = (int)args["alpha"];
+				x7.Beta = (int)args["beta"];
 			}
 			else
 			{
@@ -207,8 +280,8 @@ public class MeshXT2{
 			ErlangDistribution x8 = new ErlangDistribution(gen);
 			if(args.ContainsKey("alpha")&&args.ContainsKey("lambda"))
 			{
-				x8.Alpha = args["alpha"];
-				x8.Lambda = args["lambda"];
+				x8.Alpha = (int)args["alpha"];
+				x8.Lambda = (int)args["lambda"];
 			}
 			else
 			{
@@ -232,8 +305,8 @@ public class MeshXT2{
 			FisherSnedecorDistribution x10 = new FisherSnedecorDistribution(gen);
 			if(args.ContainsKey("alpha")&&args.ContainsKey("beta"))
 			{
-				x10.Alpha = args["alpha"];
-				x10.Beta =args["beta"];
+				x10.Alpha = (int)args["alpha"];
+				x10.Beta = (int)args["beta"];
 			}
 			else
 			{
@@ -267,8 +340,70 @@ public class MeshXT2{
 			}
 			dist = x12;
 			break;
+		case distributions.Geometric:
+			GeometricDistribution x13 = new GeometricDistribution(gen);
+			if(args.ContainsKey("alpha"))
+			{
+				x13.Alpha = args["alpha"];
+			}
+			else
+			{
+				throw new System.Exception("Geometric distribution requires alpha value");
+			}
+			dist = x13;
+			break;
+		case distributions.Binomial:
+			BinomialDistribution x14 = new BinomialDistribution(gen);
+			if(args.ContainsKey("alpha") && args.ContainsKey("beta"))
+			{
+				x14.Alpha = args["alpha"];
+				x14.Beta = (int)args["beta"];
+			}
+			else
+			{
+				throw new System.Exception("binomial distribution requires alpha and beta");
+			}
+			dist = x14;
+			break;
+		case distributions.None:
+			break;
+		default:
+			throw new NotImplementedException("the distribution you want has not yet been implemented "+
+			                              "you could help everyone out by going and implementing it");
 		}
-
+	}
+	/// <summary>
+	/// Sets the generator does not reset the generator the distribution is using to the new
+	/// generator if only using a generator this is the only thing you need to call
+	/// </summary>
+	/// <param name="seed">Seed.</param>
+	/// <param name="genx">Genx.</param>
+	public void setGenerator(int seed, generators genx)
+	{
+		switch(genx)
+		{
+			case generators.MT19937:
+			gen = new MT19937Generator(seed);
+			break;
+			case generators.ALF:
+			gen = new ALFGenerator(seed);
+			break;
+			case generators.Standard:
+			gen = new StandardGenerator(seed);
+			break;
+			case generators.XorShift:
+			gen = new XorShift128Generator(seed);
+			break;
+		}
+	}
+	/// <summary>
+	/// Sets the distribution for operations using the current genrator
+	/// </summary>
+	/// <param name="distx">Distx.</param>
+	public void setDistribution(distributions distx)
+	{
+		//probably should combine selection code from the constructor
+		throw new NotImplementedException("not ready yet");
 	}
 	/// <summary>
 	/// Commits to temp and the local variables in the class this starts execution on a seperate thread and ends 
@@ -438,11 +573,31 @@ public class MeshXT2{
 	{
 		for(int i = 0; i<vertices.Length ;i++)
 		{
-			Vector3 temp;
-			if(dist == null)
-				temp = normals[i]*(float)gen.NextDouble(min, max);
-			else
-				temp = normals[i]*(float)dist.NextDouble();
+			Vector3 temp = normals[i]*(float)gen.NextDouble(min, max);
+			for(int k=0; k<vertices.Length;k++)
+			{
+				if(i == k)
+					continue;
+				else if(vertices[i] == vertices[k])
+				{
+					vertices[k] += temp;
+				}
+			}
+			vertices[i] += temp;
+		}
+	}
+	/// <summary>
+	/// Deforms the by normal according to the distribution specified
+	/// </summary>
+	public void DeformByNormal()
+	{
+		if(dist == null)
+		{
+			throw new System.Exception("dist cannot be null when not specifying min and max");
+		}
+		for(int i = 0; i<vertices.Length ;i++)
+		{
+			Vector3 temp = normals[i]*(float)dist.NextDouble();
 			for(int k=0; k<vertices.Length;k++)
 			{
 				if(i == k)
@@ -558,5 +713,42 @@ public class MeshXT2{
 			normals[triangles[(i*3)+1]] = temp;
 			normals[triangles[(i*3)+2]] = temp;
 		}
+	}
+	/// <summary>
+	/// returns a Deep copy of the current MeshXT2
+	/// generators and distribution are not set
+	/// </summary>
+	/// <returns>The copy.</returns>
+	public MeshXT2 DeepCopy()
+	{
+		var temp = new MeshXT2();
+		temp.vertices = new Vector3[vertices.Length];
+		for(int i=0; i<vertices.Length;i++)
+		{
+			temp.vertices[i] = new Vector3(vertices[i].x, vertices[i].y, vertices[i].z);
+		}
+		temp.triangles = new int[triangles.Length];
+		for(int i=0; i< triangles.Length;i++)
+		{
+			temp.triangles[i] = triangles[i];
+		}
+		temp.normals = new Vector3[normals.Length];
+		for(int i=0; i< normals.Length;i++)
+		{
+			temp.normals[i] = new Vector3(normals[i].x, normals[i].y, normals[i].z);
+		}
+		temp.name = new string(name.ToCharArray());
+		temp.uv = new Vector2[uv.Length];
+		for(int i=0; i<uv.Length;i++)
+		{
+			temp.uv[i] = new Vector2(uv[i].x, uv[i].y);
+		}
+		try
+		{
+			temp.mesh = mesh;
+		}
+		catch
+		{}
+		return temp;
 	}
 }

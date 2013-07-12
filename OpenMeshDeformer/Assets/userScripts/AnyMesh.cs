@@ -1,5 +1,3 @@
-#define ANYMESH_DEBUG
-
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
@@ -19,7 +17,7 @@ public class AnyMesh : MonoBehaviour {
 //		meshX = new MeshXT2(1, gen, dist, 
 //		                    new Dictionary<string, double>(){{"alpha",5},{"beta", 0.1},{"gamma", 0.2}});
 		meshX = new MeshXT2(1, gen, dist, 
-		                    new Dictionary<string, double>(){{"alpha",4},{"beta", 0.1},{"gamma", 0.2}, {"mu", 0.5}, {"theta", 1.0}});
+		                    new Dictionary<string, double>(){{"alpha",0.05},{"beta", 0.1},{"gamma", 0.2}, {"mu", 0.5}, {"theta", 1.0}});
 		meshX.mesh = mesh;
 		if(mesh == null)
 		{
@@ -58,10 +56,12 @@ public class AnyMesh : MonoBehaviour {
 		meshX.Tesselate();
 		meshX.Tesselate();
 		meshX.RecalaculateNormals();
-		meshX.DeformByNormal(0.0f, 2.0f);
+		//meshX.DeformByNormal(0.0f, 2.0f);
+		meshX.DeformByNormal();
 		meshX.RecalaculateNormals();
 		//meshX.Tesselate();
-		meshX.DeformByNormal(-1.0f, 0.0f);
+		//meshX.DeformByNormal(-1.0f, 0.0f);
+		meshX.DeformByNormal();
 		meshX.CommitToMasterFinishedOnMain += step1;
 		meshX.CommitToMaster();
 	}
