@@ -6,6 +6,7 @@ using System;
 using System.Diagnostics;
 using System.Net.Mime;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 
 public class MeshXT2{
 	public volatile Mesh mesh;
@@ -16,6 +17,7 @@ public class MeshXT2{
 	public volatile Vector3[] normals;
 	Thread t;
 	volatile MeshXTinternal internalObj;
+	//may add half edges and faces later to be computed right after vertices are loaded in
 	//MT19937Generator gen;
 	Troschuetz.Random.Generator gen;
 	Troschuetz.Random.Distribution dist = null;
@@ -24,10 +26,27 @@ public class MeshXT2{
 
 	public MeshXT2(int seed) : this (seed, MeshXT2.generators.MT19937){}
 
-	public enum generators {ALF, MT19937, Standard, XorShift};
+	public enum generators {
+		/// <summary>
+		/// The ALF
+		/// </summary>
+		ALF,
+		/// <summary>
+		/// The Mt19937.
+		/// </summary>
+		MT19937,
+		/// <summary>
+		/// The standard.
+		/// </summary>
+		Standard, 
+		/// <summary>
+		/// The xor shift.
+		/// </summary>
+		XorShift};
 
 	public MeshXT2(int seed, generators genx) : this(seed, genx, MeshXT2.distributions.None, null){}
 
+	//TODO add links to help using each distribution
 	public enum distributions {
 		/// <summary>
 		/// The bernoili distribution alpha is desired error level
@@ -159,22 +178,54 @@ public class MeshXT2{
 		{
 			internalObj = Camera.mainCamera.gameObject.GetComponent<MeshXTinternal>();
 		}
+		setGenerator(seed, genx);
+		setDistribution(distx, args);
+	}
+	public Generator currentGenerator
+	{
+		get{return gen;}
+		set 
+		{
+			gen = value;
+		}
+	}
+	public Distribution currentDistribution
+	{
+		get{return dist;}
+		set{dist = value;}
+	}
+	/// <summary>
+	/// Sets the generator does not reset the generator the distribution is using to the new
+	/// generator if only using a generator this is the only thing you need to call
+	/// </summary>
+	/// <param name="seed">Seed.</param>
+	/// <param name="genx">Genx.</param>
+	public void setGenerator(int seed, generators genx)
+	{
 		switch(genx)
 		{
-			case generators.MT19937:
+		case generators.MT19937:
 			gen = new MT19937Generator(seed);
 			break;
-			case generators.ALF:
+		case generators.ALF:
 			gen = new ALFGenerator(seed);
 			break;
-			case generators.Standard:
+		case generators.Standard:
 			gen = new StandardGenerator(seed);
 			break;
-			case generators.XorShift:
+		case generators.XorShift:
 			gen = new XorShift128Generator(seed);
 			break;
 		}
-
+	}
+	/// <summary>
+	/// Sets the distribution for operations using the current genrator
+	/// </summary>
+	/// <param name="distx">Distx.</param>
+	public void setDistribution(distributions distx, Dictionary<string, double> args)
+	{
+		//TODO check arguments to ensure they are making a change to the distribution 
+		//otherwise throw an exception see laplace as a example of implementing this
 		switch(distx)
 		{
 		case distributions.Bernoili:
@@ -367,43 +418,142 @@ public class MeshXT2{
 			break;
 		case distributions.None:
 			break;
+		case distributions.Laplace:
+			LaplaceDistribution x15 = new LaplaceDistribution(gen);
+			if(args.ContainsKey("alpha") && args.ContainsKey("mu"))
+			{
+				if(x15.IsValidAlpha(args["alpha"]) && x15.IsValidMu(args["mu"]))
+				{
+					x15.Alpha = args["alpha"];
+					x15.Mu = args["mu"];
+				}
+				else throw new ArgumentException("alpha must be greater than zero");
+			}
+			else
+			{
+				throw new System.Exception("Laplace dist requires alpha and mu");
+			}
+			dist = x15;
+			break;
+		case distributions.LogNormal:
+			LognormalDistribution x16 = new LognormalDistribution(gen);
+			if(args.ContainsKey("mu")&& args.ContainsKey("sigma"))
+			{
+				x16.Mu = args["mu"];
+				x16.Sigma = args["sigma"];
+			}
+			else
+			{
+				throw new System.Exception("lognormal distribution requires mu and sigma");
+			}
+			dist = x16;
+			break;
+		case distributions.Normal:
+			NormalDistribution x17 = new NormalDistribution(gen);
+			if(args.ContainsKey("mu") && args.ContainsKey("sigma"))
+			{
+				x17.Mu = args["mu"];
+				x17.Sigma = args["sigma"];
+			}
+			else
+			{
+				throw new System.Exception("normal distribution requires mu and sigma");
+			}
+			dist = x17;
+			break;
+		case distributions.Pareto:
+			ParetoDistribution x18 = new ParetoDistribution(gen);
+			if(args.ContainsKey("alpha")&& args.ContainsKey("beta"))
+			{
+				x18.Alpha = args["alpha"];
+				x18.Beta = args["beta"];
+			}
+			else
+			{
+				throw new System.Exception("pareto distribution requires alpha and beta");
+			}
+			dist = x18;
+			break;
+		case distributions.Poisson:
+			PoissonDistribution x19 = new PoissonDistribution(gen);
+			if(args.ContainsKey("lambda"))
+			{
+				x19.Lambda = args["lambda"];
+			}
+			else
+			{
+				throw new System.Exception("Poisson distribution requires lambda");
+			}
+			dist = x19;
+			break;
+		case distributions.Power:
+			PowerDistribution x20 = new PowerDistribution(gen);
+			if(args.ContainsKey("alpha")&& args.ContainsKey("beta"))
+			{
+				x20.Alpha = args["alpha"];
+				x20.Beta = args["beta"];
+			}
+			else
+			{
+				throw new System.Exception("Power dist requires alpha and beta");
+			}
+			dist = x20;
+			break;
+		case distributions.RayLeigh:
+			RayleighDistribution x21 = new RayleighDistribution(gen);
+			if(args.ContainsKey("sigma"))
+			{
+				x21.Sigma = args["sigma"];
+			}
+			else
+			{
+				throw new System.Exception("Rayleigh dist requires sigma");
+			}
+			dist = x21;
+			break;
+		case distributions.StudentsT:
+			StudentsTDistribution x22 = new StudentsTDistribution(gen);
+			if(args.ContainsKey("nu"))
+			{
+				x22.Nu = (int)args["nu"];
+			}
+			else
+			{
+				throw new System.Exception("StudentsT dist requirres nu");
+			}
+			dist = x22;
+			break;
+		case distributions.Triangular:
+			TriangularDistribution x23 = new TriangularDistribution(gen);
+			if(args.ContainsKey("alpha")&&args.ContainsKey("beta")&& args.ContainsKey("gamma"))
+			{
+				x23.Alpha = args["alpha"];
+				x23.Beta = args["beta"];
+				x23.Gamma = args["gamma"];
+			}
+			else
+			{
+				throw new System.Exception("Triangular distribution requires alpha, beta and gamma");
+			}
+			dist = x23;
+			break;
+		case distributions.WeiBull:
+			WeibullDistribution x24 = new WeibullDistribution(gen);
+			if(args.ContainsKey("alpha")&&args.ContainsKey("lambda"))
+			{
+				x24.Alpha = args["alpha"];
+				x24.Lambda = args["lambda"];
+			}
+			else
+			{
+				throw new System.Exception("WeiBull dist requires alpha and lambda");
+			}
+			dist = x24;
+			break;
 		default:
 			throw new NotImplementedException("the distribution you want has not yet been implemented "+
-			                              "you could help everyone out by going and implementing it");
+			                                  "you could help everyone out by going and implementing it");
 		}
-	}
-	/// <summary>
-	/// Sets the generator does not reset the generator the distribution is using to the new
-	/// generator if only using a generator this is the only thing you need to call
-	/// </summary>
-	/// <param name="seed">Seed.</param>
-	/// <param name="genx">Genx.</param>
-	public void setGenerator(int seed, generators genx)
-	{
-		switch(genx)
-		{
-			case generators.MT19937:
-			gen = new MT19937Generator(seed);
-			break;
-			case generators.ALF:
-			gen = new ALFGenerator(seed);
-			break;
-			case generators.Standard:
-			gen = new StandardGenerator(seed);
-			break;
-			case generators.XorShift:
-			gen = new XorShift128Generator(seed);
-			break;
-		}
-	}
-	/// <summary>
-	/// Sets the distribution for operations using the current genrator
-	/// </summary>
-	/// <param name="distx">Distx.</param>
-	public void setDistribution(distributions distx)
-	{
-		//probably should combine selection code from the constructor
-		throw new NotImplementedException("not ready yet");
 	}
 	/// <summary>
 	/// Commits to temp and the local variables in the class this starts execution on a seperate thread and ends 
@@ -569,23 +719,23 @@ public class MeshXT2{
 	/// </summary>
 	/// <param name="min">Minimum.</param>
 	/// <param name="max">Max.</param>
-	public void DeformByNormal(float min, float max)
-	{
-		for(int i = 0; i<vertices.Length ;i++)
-		{
-			Vector3 temp = normals[i]*(float)gen.NextDouble(min, max);
-			for(int k=0; k<vertices.Length;k++)
-			{
-				if(i == k)
-					continue;
-				else if(vertices[i] == vertices[k])
-				{
-					vertices[k] += temp;
-				}
-			}
-			vertices[i] += temp;
-		}
-	}
+//	public void DeformByNormal(float min, float max)
+//	{
+//		for(int i = 0; i<vertices.Length ;i++)
+//		{
+//			Vector3 temp = normals[i]*gen.NextFloat(min, max);
+//			for(int k=0; k<vertices.Length;k++)
+//			{
+//				if(i == k)
+//					continue;
+//				else if(vertices[i] == vertices[k])
+//				{
+//					vertices[k] += temp;
+//				}
+//			}
+//			vertices[i] += temp;
+//		}
+//	}
 	/// <summary>
 	/// Deforms the by normal according to the distribution specified
 	/// </summary>
@@ -610,6 +760,101 @@ public class MeshXT2{
 			vertices[i] += temp;
 		}
 	}
+	public delegate float returnAFloat();
+	/// <summary>
+	/// Deforms the vertices by the funtion * normal
+	/// should be one of the final deform by normal functions
+	/// </summary>
+	/// <param name="function">Function must retun a float value</param>
+	public void DeformByNormal(returnAFloat function)
+	{
+		for(int i = 0; i<vertices.Length ;i++)
+		{
+			Vector3 temp = normals[i]*function();
+			for(int k=0; k<vertices.Length;k++)
+			{
+				if(i == k)
+					continue;
+				else if(vertices[i] == vertices[k])
+				{
+					vertices[k] += temp;
+				}
+			}
+			vertices[i] += temp;
+		}
+	}
+	/// <summary>
+	/// Deforms the by normal clamped between two values
+	/// </summary>
+	/// <param name="min">Minimum.</param>
+	/// <param name="max">Max.</param>
+//	public void DeformByNormalClamped(float min, float max)
+//	{
+//		if(dist == null)
+//		{
+//			throw new System.Exception("dist cannot be null when not specifying min and max");
+//		}
+//		for(int i = 0; i<vertices.Length ;i++)
+//		{
+//			Vector3 temp = normals[i]*Mathf.Clamp((float)dist.NextDouble(),min, max);
+//			for(int k=0; k<vertices.Length;k++)
+//			{
+//				if(i == k)
+//					continue;
+//				else if(vertices[i] == vertices[k])
+//				{
+//					vertices[k] += temp;
+//				}
+//			}
+//			vertices[i] += temp;
+//		}
+//	}
+	/// <summary>
+	/// Deforms by normal scaled.
+	/// </summary>
+	/// <param name="scaleBy">Scale by.</param>
+//	public void DeformByNormalScaled(float scaleBy)
+//	{
+//		if(dist == null)
+//		{
+//			throw new System.Exception("dist cannot be null when not specifying min and max");
+//		}
+//		for(int i = 0; i<vertices.Length ;i++)
+//		{
+//			Vector3 temp = normals[i]*scaleBy*(float)dist.NextDouble();
+//			for(int k=0; k<vertices.Length;k++)
+//			{
+//				if(i == k)
+//					continue;
+//				else if(vertices[i] == vertices[k])
+//				{
+//					vertices[k] += temp;
+//				}
+//			}
+//			vertices[i] += temp;
+//		}
+//	}
+//	public void DeformByNormalFixedAmount(float amount)
+//	{
+//		if(dist == null)
+//		{
+//			throw new System.Exception("dist cannot be null when not specifying min and max");
+//		}
+//		for(int i = 0; i<vertices.Length ;i++)
+//		{
+//			Vector3 temp = normals[i]*amount;
+//			for(int k=0; k<vertices.Length;k++)
+//			{
+//				if(i == k)
+//					continue;
+//				else if(vertices[i] == vertices[k])
+//				{
+//					vertices[k] += temp;
+//				}
+//			}
+//			vertices[i] += temp;
+//		}
+//	}
 	/// <summary>
 	/// Tesselate this mesh subdivides each triangle in the mesh into 4 triangles
 	/// should not be run more than four times even on very simple meshes
@@ -697,6 +942,187 @@ public class MeshXT2{
 		vertices = tempVerts;
 		uv = tempUv;
 		normals = tempNormals;
+		}
+		catch(System.Exception e)
+		{
+			UnityEngine.Debug.LogException(e);
+		}
+	}
+	public void TesselateWithModifiedNormals(returnAFloat function)
+	{
+		try
+		{
+			var tempVerts = new Vector3[triangles.Length*4];
+			var tempUv = new Vector2[triangles.Length*4];
+			var tempTris = new int[triangles.Length *4];
+			var tempNormals = new Vector3[triangles.Length*4];
+
+			for(int i = 0; i < (triangles.Length/3); i++)
+			{
+				tempTris[i*12] = (i*12); //triangles[i*3];
+				tempVerts[i*12] = vertices[triangles[i*3]];
+				tempNormals[i*12] = normals[triangles[i*3]];
+				tempUv[i*12] = uv[triangles[i*3]];
+
+				Vector2 uvM0 = MathXT.midPoint(uv[triangles[(i*3)+1]], uv[triangles[(i*3)+2]]);
+				Vector2 uvM1 = MathXT.midPoint(uv[triangles[(i*3)]], uv[triangles[(i*3)+2]]);
+				Vector2 uvM2 = MathXT.midPoint(uv[triangles[(i*3)]], uv[triangles[(i*3)+1]]);
+
+				Vector3 m0 = MathXT.midPoint(vertices[triangles[(i*3)+2]], vertices[triangles[(i*3)+1]]);
+				Vector3 m1 = MathXT.midPoint(vertices[triangles[(i*3)]], vertices[triangles[(i*3)+2]]);
+				Vector3 m2 = MathXT.midPoint(vertices[triangles[(i*3)]], vertices[triangles[(i*3)+1]]);
+
+				tempVerts[(i*12)+1] = m2;
+				tempTris[(i*12)+1] = (i*12)+1;
+				tempNormals[(i*12)+1] = normals[triangles[i*3]]*function();
+				tempUv[(i*12)+1] = uvM2;
+
+				tempVerts[(i*12)+2] = m1;
+				tempTris[(i*12)+2] = (i*12)+2;
+				tempNormals[(i*12)+2] = normals[triangles[i*3]]*function();
+				tempUv[(i*12)+2] = uvM1;
+
+				tempVerts[(i*12)+3] = vertices[triangles[(i*3)+1]];
+				tempTris[(i*12)+3] = (i*12)+3;//triangles[(i*3)+1];
+				tempNormals[(i*12)+3] = normals[triangles[(i*3)+1]];
+				tempUv[(i*12)+3] = uv[triangles[(i*3)+1]];
+
+				tempVerts[(i*12)+4] = m0;
+				tempTris[(i*12)+4] = (i*12)+4;
+				tempNormals[(i*12)+4] = normals[triangles[(i*3)+1]]*function();
+				tempUv[(i*12)+4] = uvM0;
+
+				tempVerts[(i*12)+5] = m2;
+				tempTris[(i*12)+5] = (i*12)+5;
+				tempNormals[(i*12)+5] = normals[triangles[(i*3)+1]]*function();
+				tempUv[(i*12)+5] = uvM2;
+				//triangle 3
+				tempVerts[(i*12)+6] = vertices[triangles[(i*3)+2]];
+				tempTris[(i*12)+6] = (i*12)+6;//triangles[(i*3)+2];
+				tempNormals[(i*12)+6] = normals[triangles[(i*3)+2]];
+				tempUv[(i*12)+6] = uv[triangles[(i*3)+2]];
+
+				tempVerts[(i*12)+7] = m1;
+				tempTris[(i*12)+7] = (i*12)+7;
+				tempNormals[(i*12)+7] = normals[triangles[(i*3)+2]]*function();
+				tempUv[(i*12)+7] = uvM1;
+
+				tempVerts[(i*12)+8] = m0;
+				tempTris[(i*12)+8] = (i*12)+8;
+				tempNormals[(i*12)+8] = normals[triangles[(i*3)+2]]*function();
+				tempUv[(i*12)+8] = uvM0;
+				//triangle 4 last one
+				tempVerts[(i*12)+9] = m0;
+				tempTris[(i*12)+9] = (i*12)+9;
+				tempNormals[(i*12)+9] = normals[triangles[(i*3)+1]]*function();
+				tempUv[(i*12)+9] = uvM0;
+
+				tempVerts[(i*12)+10] = m1;
+				tempTris[(i*12)+10] = (i*12)+10;
+				tempNormals[(i*12)+10] = normals[triangles[(i*3)+2]]*function();
+				tempUv[(i*12)+10] = uvM1;
+
+				tempVerts[(i*12)+11] = m2;
+				tempTris[(i*12)+11] = (i*12)+11;
+				tempNormals[(i*12)+11] = normals[triangles[(i*3)]]*function();
+				tempUv[(i*12)+11] = uvM2;
+			}
+			triangles = tempTris;
+			vertices = tempVerts;
+			uv = tempUv;
+			normals = tempNormals;
+		}
+		catch(System.Exception e)
+		{
+			UnityEngine.Debug.LogException(e);
+		}
+	}
+	public void ConvexTesselationBridging(float offset)
+	{
+		try
+		{
+			var tempVerts = new Vector3[triangles.Length*4];
+			var tempUv = new Vector2[triangles.Length*4];
+			var tempTris = new int[triangles.Length *4];
+			var tempNormals = new Vector3[triangles.Length*4];
+
+			for(int i = 0; i < (triangles.Length/3); i++)
+			{
+				tempTris[i*12] = (i*12); //triangles[i*3];
+				tempVerts[i*12] = vertices[triangles[i*3]];
+				tempNormals[i*12] = normals[triangles[i*3]];
+				tempUv[i*12] = uv[triangles[i*3]];
+
+				Vector2 uvM0 = MathXT.midPoint(uv[triangles[(i*3)+1]], uv[triangles[(i*3)+2]]);
+				Vector2 uvM1 = MathXT.midPoint(uv[triangles[(i*3)]], uv[triangles[(i*3)+2]]);
+				Vector2 uvM2 = MathXT.midPoint(uv[triangles[(i*3)]], uv[triangles[(i*3)+1]]);
+
+				Vector3 m0 = MathXT.midPoint(vertices[triangles[(i*3)+2]], vertices[triangles[(i*3)+1]])
+					+ offset*normals[triangles[(i*3)+1]];
+				Vector3 m1 = MathXT.midPoint(vertices[triangles[(i*3)]], vertices[triangles[(i*3)+2]])
+					+ offset*normals[triangles[(i*3)+1]];
+				Vector3 m2 = MathXT.midPoint(vertices[triangles[(i*3)]], vertices[triangles[(i*3)+1]])
+					+ offset*normals[triangles[(i*3)+1]];
+
+				tempVerts[(i*12)+1] = m2;
+				tempTris[(i*12)+1] = (i*12)+1;
+				tempNormals[(i*12)+1] = normals[triangles[i*3]];
+				tempUv[(i*12)+1] = uvM2;
+
+				tempVerts[(i*12)+2] = m1;
+				tempTris[(i*12)+2] = (i*12)+2;
+				tempNormals[(i*12)+2] = normals[triangles[i*3]];
+				tempUv[(i*12)+2] = uvM1;
+
+				tempVerts[(i*12)+3] = vertices[triangles[(i*3)+1]];
+				tempTris[(i*12)+3] = (i*12)+3;//triangles[(i*3)+1];
+				tempNormals[(i*12)+3] = normals[triangles[(i*3)+1]];
+				tempUv[(i*12)+3] = uv[triangles[(i*3)+1]];
+
+				tempVerts[(i*12)+4] = m0;
+				tempTris[(i*12)+4] = (i*12)+4;
+				tempNormals[(i*12)+4] = normals[triangles[(i*3)+1]];
+				tempUv[(i*12)+4] = uvM0;
+
+				tempVerts[(i*12)+5] = m2;
+				tempTris[(i*12)+5] = (i*12)+5;
+				tempNormals[(i*12)+5] = normals[triangles[(i*3)+1]];
+				tempUv[(i*12)+5] = uvM2;
+				//triangle 3
+				tempVerts[(i*12)+6] = vertices[triangles[(i*3)+2]];
+				tempTris[(i*12)+6] = (i*12)+6;//triangles[(i*3)+2];
+				tempNormals[(i*12)+6] = normals[triangles[(i*3)+2]];
+				tempUv[(i*12)+6] = uv[triangles[(i*3)+2]];
+
+				tempVerts[(i*12)+7] = m1;
+				tempTris[(i*12)+7] = (i*12)+7;
+				tempNormals[(i*12)+7] = normals[triangles[(i*3)+2]];
+				tempUv[(i*12)+7] = uvM1;
+
+				tempVerts[(i*12)+8] = m0;
+				tempTris[(i*12)+8] = (i*12)+8;
+				tempNormals[(i*12)+8] = normals[triangles[(i*3)+2]];
+				tempUv[(i*12)+8] = uvM0;
+				//triangle 4 last one
+				tempVerts[(i*12)+9] = m0;
+				tempTris[(i*12)+9] = (i*12)+9;
+				tempNormals[(i*12)+9] = normals[triangles[(i*3)+1]];
+				tempUv[(i*12)+9] = uvM0;
+
+				tempVerts[(i*12)+10] = m1;
+				tempTris[(i*12)+10] = (i*12)+10;
+				tempNormals[(i*12)+10] = normals[triangles[(i*3)+2]];
+				tempUv[(i*12)+10] = uvM1;
+
+				tempVerts[(i*12)+11] = m2;
+				tempTris[(i*12)+11] = (i*12)+11;
+				tempNormals[(i*12)+11] = normals[triangles[(i*3)]];
+				tempUv[(i*12)+11] = uvM2;
+			}
+			triangles = tempTris;
+			vertices = tempVerts;
+			uv = tempUv;
+			normals = tempNormals;
 		}
 		catch(System.Exception e)
 		{

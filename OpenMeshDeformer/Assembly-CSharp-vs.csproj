@@ -44,11 +44,14 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
-     <Compile Include="Assets\userScripts\AnyMesh.cs" />
      <Compile Include="Assets\userScripts\Begining.cs" />
+     <Compile Include="Assets\userScripts\DecisionTree\DecTest.cs" />
+     <Compile Include="Assets\userScripts\DecisionTree\DecisionTree.cs" />
      <Compile Include="Assets\userScripts\MathXT.cs" />
-     <Compile Include="Assets\userScripts\MeshXT2.cs" />
-     <Compile Include="Assets\userScripts\MeshXTinternal.cs" />
+     <Compile Include="Assets\userScripts\MeshWorks\AnyMesh.cs" />
+     <Compile Include="Assets\userScripts\MeshWorks\MeshXT2.cs" />
+     <Compile Include="Assets\userScripts\MeshWorks\MeshXTinternal.cs" />
+     <Compile Include="Assets\userScripts\MeshWorks\Potato.cs" />
      <None Include="Assets\Standard Assets\Projectors\Guidelines.txt" />
      <None Include="Assets\Standard Assets\Projectors\Sources\Shaders\Projector Multiply.shader" />
      <None Include="Assets\Standard Assets\Tessellation Shaders\BumpedSpecularSmooth.shader" />
@@ -60,7 +63,7 @@
  <HintPath>Library\ScriptAssemblies\Assembly-UnityScript-firstpass.dll</HintPath>
  </Reference>
  <Reference Include="Troschuetz.Random">
- <HintPath>Assets\userScripts\Troschuetz.Random.dll</HintPath>
+ <HintPath>Assets\userScripts\MeshWorks\Troschuetz.Random.dll</HintPath>
  </Reference>
   </ItemGroup>
   <ItemGroup>

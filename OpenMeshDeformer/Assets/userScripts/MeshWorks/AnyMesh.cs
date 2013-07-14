@@ -8,6 +8,14 @@ public class AnyMesh : MonoBehaviour {
 	public Mesh mesh;
 	public MeshXT2.generators gen = MeshXT2.generators.MT19937;
 	public MeshXT2.distributions dist = MeshXT2.distributions.Beta;
+	public double alpha = 0.05;
+	public double beta = 0.1;
+	public double gamma = 0.2;
+	public double mu = 0.5;
+	public double theta = 1.0;
+	public double lambda = 0.3;
+	public double nu = 0.05;
+	public double sigma = 1;
 	// Use this for initialization
 	void Start () {
 //		meshX = new MeshXT2(1, MeshXT2.generators.MT19937,
@@ -17,7 +25,9 @@ public class AnyMesh : MonoBehaviour {
 //		meshX = new MeshXT2(1, gen, dist, 
 //		                    new Dictionary<string, double>(){{"alpha",5},{"beta", 0.1},{"gamma", 0.2}});
 		meshX = new MeshXT2(1, gen, dist, 
-		                    new Dictionary<string, double>(){{"alpha",0.05},{"beta", 0.1},{"gamma", 0.2}, {"mu", 0.5}, {"theta", 1.0}});
+		                    new Dictionary<string, double>(){{"alpha",alpha},{"beta", beta}
+			,{"gamma", gamma}, {"mu", mu}, {"theta", theta},{"lambda", lambda}, {"nu", nu},
+			{"sigma", sigma}});
 		meshX.mesh = mesh;
 		if(mesh == null)
 		{

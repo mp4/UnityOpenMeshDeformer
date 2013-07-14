@@ -57,7 +57,7 @@
      <None Include="Assets\Standard Assets\Water (Basic)\Sources\Shaders\FX-Water Simple.shader" />
      <None Include="Assets\Standard Assets\Tessellation Shaders\BumpedSpecularDisplacement.shader" />
  <Reference Include="Troschuetz.Random">
- <HintPath>Assets\userScripts\Troschuetz.Random.dll</HintPath>
+ <HintPath>Assets\userScripts\MeshWorks\Troschuetz.Random.dll</HintPath>
  </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
