@@ -65,7 +65,7 @@ public class DecisionTree{
 		}
 		temp = node;
 	}
-	void registerVariables(DecisionNode node)
+	protected void registerVariables(DecisionNode node)
 	{
 		foreach(VariableNode vax in node.variables_)
 		{
@@ -75,7 +75,7 @@ public class DecisionTree{
 			}
 		}
 	}
-	public void AddVariable(VariableNode node)
+	public virtual void AddVariable(VariableNode node)
 	{
 		if(variables.ContainsKey(node.name_))
 			throw new ArgumentException("this variable has already been registered");
@@ -111,14 +111,35 @@ public class DecisionTree{
 
 public class DecisionNode
 {
+	//maybe should protect them
 	public List<VariableNode> variables_;
 	public List<VariableTransformation> transforms_;
 	public DecisionNode node = null;
+	//now for all of the constructors
+	/// <summary>
+	/// Initializes a new instance of the <see cref="DecisionNode"/> class.
+	/// </summary>
 	public DecisionNode():this(new List<VariableNode>(),
 	                           new List<VariableTransformation>(),
 	                           null){}
+	/// <summary>
+	/// Initializes a new instance of the <see cref="DecisionNode"/> class.
+	/// </summary>
+	/// <param name="transforms">list of transforms.</param>
 	public DecisionNode(List<VariableTransformation> transforms):
 		this(new List<VariableNode>(), transforms, null){}
+	/// <summary>
+	/// Initializes a new instance of the <see cref="DecisionNode"/> class.
+	/// </summary>
+	/// <param name="xnode">a variable node</param>
+	public DecisionNode(VariableNode xnode):
+		this(new List<VariableNode>(){xnode},null,null){}
+	/// <summary>
+	/// Initializes a new instance of the <see cref="DecisionNode"/> class.
+	/// </summary>
+	/// <param name="variables">Variables.</param>
+	/// <param name="transforms">Transforms.</param>
+	/// <param name="next">Next.</param>
 	public DecisionNode(List<VariableNode> variables,
 	                    List<VariableTransformation> transforms,
 	                    DecisionNode next)
@@ -164,7 +185,7 @@ public class VariableNode
 		name_ = name;
 		variableEvent += function;
 	}
-	public void XFinalize()
+	public virtual void XFinalize()
 	{
 		variableEvent();
 	}
@@ -183,6 +204,7 @@ public class VariableTransformation
 		toThis = toT;
 		condition = function;
 	}
+	//I need to leave a tie in for changing the variables as a virtual function
 	public List<VariableNode> apply(List<VariableNode> variables, DecisionTree tree)
 	{
 		if(fromThis == null)

@@ -47,6 +47,7 @@
      <Compile Include="Assets\userScripts\Begining.cs" />
      <Compile Include="Assets\userScripts\DecisionTree\DecTest.cs" />
      <Compile Include="Assets\userScripts\DecisionTree\DecisionTree.cs" />
+     <Compile Include="Assets\userScripts\DecisionTree\Lsystem.cs" />
      <Compile Include="Assets\userScripts\MathXT.cs" />
      <Compile Include="Assets\userScripts\MeshWorks\AnyMesh.cs" />
      <Compile Include="Assets\userScripts\MeshWorks\MeshXT2.cs" />

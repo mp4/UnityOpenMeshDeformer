@@ -15,6 +15,10 @@ public class MeshXT2{
 	public volatile Vector2[] uv;
 	public volatile string name;
 	public volatile Vector3[] normals;
+
+	// next step
+	public volatile Face[] faces;
+	public volatile HalfEdge[] hEdges;
 	Thread t;
 	volatile MeshXTinternal internalObj;
 	//may add half edges and faces later to be computed right after vertices are loaded in
@@ -635,7 +639,6 @@ public class MeshXT2{
 
 	}
 	public delegate void CommitToMasterFinishedDelegate();
-	public event CommitToMasterFinishedDelegate CommitToMasterFinished;
 	public event CommitToMasterFinishedDelegate CommitToMasterFinishedOnMain;
 	public void CommitToMaster()
 	{
@@ -1142,7 +1145,9 @@ public class MeshXT2{
 	}
 	/// <summary>
 	/// returns a Deep copy of the current MeshXT2
-	/// generators and distribution are not set
+	/// mesh, generators and distribution are not set
+	/// mesh copying could be done but would make this
+	/// much slower as that would have to be done on the main thread
 	/// </summary>
 	/// <returns>The copy.</returns>
 	public MeshXT2 DeepCopy()
@@ -1169,12 +1174,25 @@ public class MeshXT2{
 		{
 			temp.uv[i] = new Vector2(uv[i].x, uv[i].y);
 		}
-		try
-		{
-			temp.mesh = mesh;
-		}
-		catch
-		{}
+//		try
+//		{
+//			temp.mesh = mesh;
+//		}
+//		catch
+//		{}
 		return temp;
 	}
+}
+/// <summary>
+/// Half edge order of the vertices matters
+/// </summary>
+public class HalfEdge
+{
+	public int first, second;
+	public HalfEdge corrosponding;
+	public Face face;
+}
+public class Face
+{
+	public HalfEdge first, second, third;
 }

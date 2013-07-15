@@ -21,12 +21,18 @@ public class decTreeTest
 	public void begin()
 	{
 		DecisionTree tree = new DecisionTree();
-		tree.AddNode(new DecisionNode(new List<VariableNode>(){
+
+		tree.AddNode(new DecisionNode(new List<VariableNode>()
+		{
 			new VariableNode("a", aCalled),new VariableNode("a", aCalled)
 		},
 		new List<VariableTransformation>()
-		{new VariableTransformation(new List<string>(){"a", "a"}, new List<string>(){"b"})}
+		{
+			new VariableTransformation(new List<string>(){"a", "a"}, new List<string>(){"b"})
+		}
 		,null));
+
+
 		tree.AddVariable(new VariableNode("b", bCalled));
 		tree.EvaluteTree();
 	}
