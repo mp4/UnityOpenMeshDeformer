@@ -1182,17 +1182,57 @@ public class MeshXT2{
 //		{}
 		return temp;
 	}
+
+	public void CalculateHalfEdgesAndFaces()
+	{
+		//fast part of calculating faces and edges
+		hEdges = new HalfEdge[triangles.Length];
+		faces = new Face[triangles.Length/3];//currently only supports triangles as faces
+		for(int i=0; i< triangles.Length/3; i++)
+		{
+			var temp = new Face();
+			hEdges[i*3] = new HalfEdge(triangles[(i*3)], triangles[(i*3)+1], temp);
+			hEdges[(i*3)+1] = new HalfEdge(triangles[(i*3)+1], triangles[(i*3)+2], temp);
+			hEdges[(i*3)+2] = new HalfEdge(triangles[(i*3)+2], triangles[(i*3)], temp);
+			faces[i] = temp;
+		}
+		//slow part
+		resolveHalfEdgeCorrospondence();
+	}
+	void resolveHalfEdgeCorrospondence()
+	{
+		for(int i =0; i<hEdges.Length; i++)
+		{
+			for(int k = i +1; k < hEdges.Length; k++)
+			{
+				if(hEdges[i].corrosponding != null || hEdges[k].corrosponding != null)
+					continue;
+				if(vertices[hEdges[i].first_] == vertices[hEdges[k].second_] &&
+				   vertices[hEdges[i].second_] == vertices[hEdges[k].first_])
+				{
+					hEdges[i].corrosponding = hEdges[k];
+					hEdges[k].corrosponding = hEdges[i];
+				}
+			}
+		}
+	}
 }
 /// <summary>
 /// Half edge order of the vertices matters
 /// </summary>
 public class HalfEdge
 {
-	public int first, second;
+	public int first_, second_;//corrospond to vertex indices
 	public HalfEdge corrosponding;
-	public Face face;
+	public Face face_;
+	public HalfEdge(int first, int second, Face face)
+	{
+		first_ = first;
+		second_ = second;
+		face_ = face;
+	}
 }
 public class Face
 {
-	public HalfEdge first, second, third;
+	public HalfEdge[] edges;
 }
