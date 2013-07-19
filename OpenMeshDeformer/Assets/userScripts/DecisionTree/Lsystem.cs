@@ -3,9 +3,23 @@ using System.Collections;
 using System.ComponentModel;
 using System.Collections.Generic;
 
-public class Lsystem :DecisionTree {
-
-
+public class Lsystem :DecisionTreeBase {
+	public void AddBlock (LsysBlock block)
+	{
+		base.AddNode (block);
+	}
+	public void EvaluateSystem()
+	{
+		base.EvaluteTree();
+	}
+//	public void AddNode(LsysBlock node,LsysBlock parent)
+//	{
+//
+//	}
+	public void AddVariable(LsysVar variable)
+	{
+		base.AddVariable(variable);
+	}
 }
 public class LsysBlock : DecisionNode
 {

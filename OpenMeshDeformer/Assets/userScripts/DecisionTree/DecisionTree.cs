@@ -11,13 +11,13 @@ using System.Linq;
 /// watch that events do not call functions that must be called on the 
 /// main thread
 /// </summary>
-public class DecisionTree{
+public class DecisionTreeBase{
 	Generator gen;
 	Distribution dist;
 	DecisionNode head = null;
 	public Dictionary<string, VariableNode> variables;
 
-	public DecisionTree()
+	public DecisionTreeBase()
 	{
 		variables = new Dictionary<string, VariableNode>();
 	}
@@ -26,7 +26,7 @@ public class DecisionTree{
 	/// </summary>
 	/// <param name="node">Node.</param>
 	/// <param name="parent">Parent.</param>
-	public void AddNode(DecisionNode node, DecisionNode parent)
+	protected void AddNode(DecisionNode node, DecisionNode parent)
 	{
 		registerVariables(node);
 		if(parent == null)
@@ -50,7 +50,7 @@ public class DecisionTree{
 	/// Adds the node to the end of the tree
 	/// </summary>
 	/// <param name="node">Node.</param>
-	public void AddNode(DecisionNode node)
+	protected void AddNode(DecisionNode node)
 	{
 		registerVariables(node);
 		if(head == null)
@@ -65,7 +65,7 @@ public class DecisionTree{
 		}
 		temp = node;
 	}
-	protected void registerVariables(DecisionNode node)
+	void registerVariables(DecisionNode node)
 	{
 		foreach(VariableNode vax in node.variables_)
 		{
@@ -75,7 +75,7 @@ public class DecisionTree{
 			}
 		}
 	}
-	public virtual void AddVariable(VariableNode node)
+	protected void AddVariable(VariableNode node)
 	{
 		if(variables.ContainsKey(node.name_))
 			throw new ArgumentException("this variable has already been registered");
@@ -85,7 +85,7 @@ public class DecisionTree{
 	/// Evalutes the tree calls all of the variables that are left
 	/// once the tree is evaluated
 	/// </summary>
-	public void EvaluteTree()
+	protected void EvaluteTree()
 	{
 		if(head != null)
 		{
@@ -148,7 +148,7 @@ public class DecisionNode
 		variables_ = variables;
 		node = next;
 	}
-	public void Evaluate(DecisionTree tree)
+	public void Evaluate(DecisionTreeBase tree)
 	{
 		for(int i=0;i<transforms_.Count;i++)
 		{
@@ -205,7 +205,7 @@ public class VariableTransformation
 		condition = function;
 	}
 	//I need to leave a tie in for changing the variables as a virtual function
-	public List<VariableNode> apply(List<VariableNode> variables, DecisionTree tree)
+	public List<VariableNode> apply(List<VariableNode> variables, DecisionTreeBase tree)
 	{
 		if(fromThis == null)
 		{
@@ -246,6 +246,25 @@ public class VariableTransformation
 		{
 			return variables;
 		}
+	}
+}
+public class DecisionTree :DecisionTreeBase
+{
+	public void AddNode(DecisionNode node)
+	{
+		base.AddNode(node);
+	}
+	public void AddNode(DecisionNode node, DecisionNode parent)
+	{
+		base.AddNode(node, parent);
+	}
+	public void EvaluateTree()
+	{
+		base.EvaluteTree();
+	}
+	public void AddVariable(VariableNode varNode)
+	{
+		base.AddVariable(varNode);
 	}
 }
 

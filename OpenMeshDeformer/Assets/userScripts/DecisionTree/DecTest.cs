@@ -34,7 +34,8 @@ public class decTreeTest
 
 
 		tree.AddVariable(new VariableNode("b", bCalled));
-		tree.EvaluteTree();
+		//tree.EvaluteTree();
+		tree.EvaluateTree();
 	}
 	void aCalled()
 	{

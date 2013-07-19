@@ -49,12 +49,16 @@
      <Compile Include="Assets\userScripts\DecisionTree\DecisionTree.cs" />
      <Compile Include="Assets\userScripts\DecisionTree\Lsystem.cs" />
      <Compile Include="Assets\userScripts\MathXT.cs" />
-     <Compile Include="Assets\userScripts\MeshWorks\AnyMesh.cs" />
-     <Compile Include="Assets\userScripts\MeshWorks\MeshXT2.cs" />
-     <Compile Include="Assets\userScripts\MeshWorks\MeshXTinternal.cs" />
-     <Compile Include="Assets\userScripts\MeshWorks\Potato.cs" />
+     <Compile Include="Assets\userScripts\MeshDeformer\AnyMesh.cs" />
+     <Compile Include="Assets\userScripts\MeshDeformer\MeshXT2.cs" />
+     <Compile Include="Assets\userScripts\MeshDeformer\MeshXTinternal.cs" />
+     <Compile Include="Assets\userScripts\MeshDeformer\Potato.cs" />
+     <Compile Include="Assets\voxelizer\FastStaticVoxleizer.cs" />
+     <Compile Include="Assets\voxelizer\QuickVoxelSwitcher.cs" />
+     <Compile Include="Assets\voxelizer\Voxelizer.cs" />
      <None Include="Assets\Standard Assets\Projectors\Guidelines.txt" />
      <None Include="Assets\Standard Assets\Projectors\Sources\Shaders\Projector Multiply.shader" />
+     <None Include="Assets\voxelizer\README.txt" />
      <None Include="Assets\Standard Assets\Tessellation Shaders\BumpedSpecularSmooth.shader" />
      <None Include="Assets\Standard Assets\Particles\Sources\Shaders\Particle Alpha Blend (Queue +100).shader" />
      <None Include="Assets\Standard Assets\Projectors\Sources\Shaders\Projector Light.shader" />
@@ -64,7 +68,7 @@
  <HintPath>Library\ScriptAssemblies\Assembly-UnityScript-firstpass.dll</HintPath>
  </Reference>
  <Reference Include="Troschuetz.Random">
- <HintPath>Assets\userScripts\MeshWorks\Troschuetz.Random.dll</HintPath>
+ <HintPath>Assets\userScripts\MeshDeformer\Troschuetz.Random.dll</HintPath>
  </Reference>
   </ItemGroup>
   <ItemGroup>

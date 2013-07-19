@@ -791,73 +791,7 @@ public class MeshXT2{
 	/// </summary>
 	/// <param name="min">Minimum.</param>
 	/// <param name="max">Max.</param>
-//	public void DeformByNormalClamped(float min, float max)
-//	{
-//		if(dist == null)
-//		{
-//			throw new System.Exception("dist cannot be null when not specifying min and max");
-//		}
-//		for(int i = 0; i<vertices.Length ;i++)
-//		{
-//			Vector3 temp = normals[i]*Mathf.Clamp((float)dist.NextDouble(),min, max);
-//			for(int k=0; k<vertices.Length;k++)
-//			{
-//				if(i == k)
-//					continue;
-//				else if(vertices[i] == vertices[k])
-//				{
-//					vertices[k] += temp;
-//				}
-//			}
-//			vertices[i] += temp;
-//		}
-//	}
-	/// <summary>
-	/// Deforms by normal scaled.
-	/// </summary>
-	/// <param name="scaleBy">Scale by.</param>
-//	public void DeformByNormalScaled(float scaleBy)
-//	{
-//		if(dist == null)
-//		{
-//			throw new System.Exception("dist cannot be null when not specifying min and max");
-//		}
-//		for(int i = 0; i<vertices.Length ;i++)
-//		{
-//			Vector3 temp = normals[i]*scaleBy*(float)dist.NextDouble();
-//			for(int k=0; k<vertices.Length;k++)
-//			{
-//				if(i == k)
-//					continue;
-//				else if(vertices[i] == vertices[k])
-//				{
-//					vertices[k] += temp;
-//				}
-//			}
-//			vertices[i] += temp;
-//		}
-//	}
-//	public void DeformByNormalFixedAmount(float amount)
-//	{
-//		if(dist == null)
-//		{
-//			throw new System.Exception("dist cannot be null when not specifying min and max");
-//		}
-//		for(int i = 0; i<vertices.Length ;i++)
-//		{
-//			Vector3 temp = normals[i]*amount;
-//			for(int k=0; k<vertices.Length;k++)
-//			{
-//				if(i == k)
-//					continue;
-//				else if(vertices[i] == vertices[k])
-//				{
-//					vertices[k] += temp;
-//				}
-//			}
-//			vertices[i] += temp;
-//		}
-//	}
+
 	/// <summary>
 	/// Tesselate this mesh subdivides each triangle in the mesh into 4 triangles
 	/// should not be run more than four times even on very simple meshes
@@ -1042,95 +976,11 @@ public class MeshXT2{
 	}
 	public void ConvexTesselationBridging(float offset)
 	{
-		try
-		{
-			var tempVerts = new Vector3[triangles.Length*4];
-			var tempUv = new Vector2[triangles.Length*4];
-			var tempTris = new int[triangles.Length *4];
-			var tempNormals = new Vector3[triangles.Length*4];
+		if(hEdges == null)
+			throw new ArgumentNullException("half edges must be calculated before calling this function");
+		// probably should check that half edges are the latest calculations
 
-			for(int i = 0; i < (triangles.Length/3); i++)
-			{
-				tempTris[i*12] = (i*12); //triangles[i*3];
-				tempVerts[i*12] = vertices[triangles[i*3]];
-				tempNormals[i*12] = normals[triangles[i*3]];
-				tempUv[i*12] = uv[triangles[i*3]];
 
-				Vector2 uvM0 = MathXT.midPoint(uv[triangles[(i*3)+1]], uv[triangles[(i*3)+2]]);
-				Vector2 uvM1 = MathXT.midPoint(uv[triangles[(i*3)]], uv[triangles[(i*3)+2]]);
-				Vector2 uvM2 = MathXT.midPoint(uv[triangles[(i*3)]], uv[triangles[(i*3)+1]]);
-
-				Vector3 m0 = MathXT.midPoint(vertices[triangles[(i*3)+2]], vertices[triangles[(i*3)+1]])
-					+ offset*normals[triangles[(i*3)+1]];
-				Vector3 m1 = MathXT.midPoint(vertices[triangles[(i*3)]], vertices[triangles[(i*3)+2]])
-					+ offset*normals[triangles[(i*3)+1]];
-				Vector3 m2 = MathXT.midPoint(vertices[triangles[(i*3)]], vertices[triangles[(i*3)+1]])
-					+ offset*normals[triangles[(i*3)+1]];
-
-				tempVerts[(i*12)+1] = m2;
-				tempTris[(i*12)+1] = (i*12)+1;
-				tempNormals[(i*12)+1] = normals[triangles[i*3]];
-				tempUv[(i*12)+1] = uvM2;
-
-				tempVerts[(i*12)+2] = m1;
-				tempTris[(i*12)+2] = (i*12)+2;
-				tempNormals[(i*12)+2] = normals[triangles[i*3]];
-				tempUv[(i*12)+2] = uvM1;
-
-				tempVerts[(i*12)+3] = vertices[triangles[(i*3)+1]];
-				tempTris[(i*12)+3] = (i*12)+3;//triangles[(i*3)+1];
-				tempNormals[(i*12)+3] = normals[triangles[(i*3)+1]];
-				tempUv[(i*12)+3] = uv[triangles[(i*3)+1]];
-
-				tempVerts[(i*12)+4] = m0;
-				tempTris[(i*12)+4] = (i*12)+4;
-				tempNormals[(i*12)+4] = normals[triangles[(i*3)+1]];
-				tempUv[(i*12)+4] = uvM0;
-
-				tempVerts[(i*12)+5] = m2;
-				tempTris[(i*12)+5] = (i*12)+5;
-				tempNormals[(i*12)+5] = normals[triangles[(i*3)+1]];
-				tempUv[(i*12)+5] = uvM2;
-				//triangle 3
-				tempVerts[(i*12)+6] = vertices[triangles[(i*3)+2]];
-				tempTris[(i*12)+6] = (i*12)+6;//triangles[(i*3)+2];
-				tempNormals[(i*12)+6] = normals[triangles[(i*3)+2]];
-				tempUv[(i*12)+6] = uv[triangles[(i*3)+2]];
-
-				tempVerts[(i*12)+7] = m1;
-				tempTris[(i*12)+7] = (i*12)+7;
-				tempNormals[(i*12)+7] = normals[triangles[(i*3)+2]];
-				tempUv[(i*12)+7] = uvM1;
-
-				tempVerts[(i*12)+8] = m0;
-				tempTris[(i*12)+8] = (i*12)+8;
-				tempNormals[(i*12)+8] = normals[triangles[(i*3)+2]];
-				tempUv[(i*12)+8] = uvM0;
-				//triangle 4 last one
-				tempVerts[(i*12)+9] = m0;
-				tempTris[(i*12)+9] = (i*12)+9;
-				tempNormals[(i*12)+9] = normals[triangles[(i*3)+1]];
-				tempUv[(i*12)+9] = uvM0;
-
-				tempVerts[(i*12)+10] = m1;
-				tempTris[(i*12)+10] = (i*12)+10;
-				tempNormals[(i*12)+10] = normals[triangles[(i*3)+2]];
-				tempUv[(i*12)+10] = uvM1;
-
-				tempVerts[(i*12)+11] = m2;
-				tempTris[(i*12)+11] = (i*12)+11;
-				tempNormals[(i*12)+11] = normals[triangles[(i*3)]];
-				tempUv[(i*12)+11] = uvM2;
-			}
-			triangles = tempTris;
-			vertices = tempVerts;
-			uv = tempUv;
-			normals = tempNormals;
-		}
-		catch(System.Exception e)
-		{
-			UnityEngine.Debug.LogException(e);
-		}
 	}
 	public void RecalaculateNormals()
 	{
@@ -1215,6 +1065,20 @@ public class MeshXT2{
 				}
 			}
 		}
+	} 
+	/// <summary>
+	/// is Closed calculates whether the shape is closed has no holes and every face/ edge 
+	/// has a face/edge next to it
+	/// </summary>
+	/// <returns><c>true</c>, if closed was ised, <c>false</c> otherwise.</returns>
+	public bool isClosed()
+	{
+		foreach(HalfEdge edge in hEdges)
+		{
+			if(edge.corrosponding == null)
+				return false;
+		}
+		return true;
 	}
 }
 /// <summary>
