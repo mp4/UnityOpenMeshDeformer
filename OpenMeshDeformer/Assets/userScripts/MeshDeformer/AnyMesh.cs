@@ -16,6 +16,7 @@ public class AnyMesh : MonoBehaviour {
 	public double lambda = 0.3;
 	public double nu = 0.05;
 	public double sigma = 1;
+	Timer timer = new Timer();
 	// Use this for initialization
 	void Start () {
 //		meshX = new MeshXT2(1, MeshXT2.generators.MT19937,
@@ -36,13 +37,15 @@ public class AnyMesh : MonoBehaviour {
 #if UNITY_EDITOR
 		Debug.Log("editor directive works starting commit");
 #endif
+		timer.Start();
+		//meshX.useTexture = false;
 		meshX.CommitToTempFinished += step0;
 		meshX.CommitToTemp();
 	}
 	void step0()
 	{
 		#if UNITY_EDITOR
-		Debug.Log("in step 0");
+		//Debug.Log("in step 0");
 //		for(int i = 0; i < meshX.vertices.Length; i++)
 //		{
 //			Debug.Log(meshX.vertices[i] +":vertex");
@@ -72,13 +75,21 @@ public class AnyMesh : MonoBehaviour {
 		//meshX.Tesselate();
 		//meshX.DeformByNormal(-1.0f, 0.0f);
 		meshX.DeformByNormal();
+		//meshX.clearTexToBlack();
+		meshX.setPixels(()=>{return new Color(
+				(float)meshX.currentDistribution.NextDouble(),
+				(float)meshX.currentDistribution.NextDouble(),
+				//0,0,
+				meshX.currentGenerator.NextBoolean()? 0.75f: 0.25f
+				//(float)meshX.currentDistribution.NextDouble()
+				);});
 		meshX.CommitToMasterFinishedOnMain += step1;
 		meshX.CommitToMaster();
 	}
 	void step1()
 	{
 		#if UNITY_EDITOR
-		Debug.Log("in step 1");
+		//Debug.Log("in step 1");
 //		for(int i = 0; i < meshX.mesh.vertices.Length; i++)
 //		{
 //			Debug.Log(meshX.mesh.vertices[i] +":vertex");
@@ -87,6 +98,15 @@ public class AnyMesh : MonoBehaviour {
 		#endif
 		meshX.mesh.RecalculateNormals();
 		gameObject.GetComponent<MeshFilter>().mesh = meshX.mesh;
+		meshX.commitPixelsToTex();
+
+		//gameObject.GetComponent<MeshRenderer>().material.SetTexture("Base (RGB)", meshX.tex);
+		gameObject.GetComponent<MeshRenderer>().material.mainTexture = meshX.tex;
+		Debug.Log(timer.Stop() + ":any mesh took <- seconds to complete");
+		Debug.Log(meshX.tex.GetPixel(0,0) + "pixel 0,0 after assignment");
+		//renderer.material.mainTexture =meshX.tex;
+		//Debug.Log(gameObject.GetComponent<MeshRenderer>().material.mainTexture)
+		//gameObject.GetComponent<MeshRenderer>().materials[0].SetTexture("", meshX.tex);
 	}
 	// Update is called once per frame
 	void Update () {

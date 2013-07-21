@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using Troschuetz.Random;
 using System;
-using UnityEditor;
 using System.Linq;
 
 /// <summary>
@@ -177,7 +176,7 @@ public class DecisionNode
 public class VariableNode
 {
 	public string name_;
-	public delegate void variableDelegate();
+	public delegate void variableDelegate(VariableNode thisX);
 	public event variableDelegate variableEvent;
 	public VariableNode(string name):this(name, null){}
 	public VariableNode(string name, variableDelegate function)
@@ -187,16 +186,16 @@ public class VariableNode
 	}
 	public virtual void XFinalize()
 	{
-		variableEvent();
+		variableEvent(this);
 	}
 }
 public class VariableTransformation
 {
-	List<string> fromThis;
-	List<string> toThis;
+	protected List<string> fromThis;
+	protected List<string> toThis;
 	//DecisionNode node = null;
 	public delegate bool conditionDelegate();
-	conditionDelegate condition ;//= ()=>{return true;};
+	protected conditionDelegate condition ;//= ()=>{return true;};
 	public VariableTransformation(List<string> fromT, List<string> toT):this(fromT, toT, ()=>{return true;}){}
 	public VariableTransformation(List<string> fromT, List<string> toT, conditionDelegate function)
 	{
@@ -205,8 +204,9 @@ public class VariableTransformation
 		condition = function;
 	}
 	//I need to leave a tie in for changing the variables as a virtual function
-	public List<VariableNode> apply(List<VariableNode> variables, DecisionTreeBase tree)
+	public virtual List<VariableNode> apply(List<VariableNode> variables, DecisionTreeBase tree)
 	{
+		Debug.Log("base apply");
 		if(fromThis == null)
 		{
 			throw new System.Exception("transform from this cannot be null");

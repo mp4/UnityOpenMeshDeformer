@@ -17,6 +17,8 @@ public class Potato : MonoBehaviour {
 	public double lambda = 0.3;
 	public double nu = 0.05;
 	public double sigma = 1;
+
+	Timer timer;
 	// Use this for initialization
 	void Start () {
 		//		meshX = new MeshXT2(1, MeshXT2.generators.MT19937,
@@ -37,13 +39,16 @@ public class Potato : MonoBehaviour {
 		#if UNITY_EDITOR
 		Debug.Log("editor directive works starting commit");
 		#endif
+		timer = new Timer();
+		timer.Start();
+		meshX.useTexture = false;
 		meshX.CommitToTempFinished += step0;
 		meshX.CommitToTemp();
 	}
 	void step0()
 	{
 		#if UNITY_EDITOR
-		Debug.Log("in step 0");
+		//Debug.Log("in step 0");
 		//		for(int i = 0; i < meshX.vertices.Length; i++)
 		//		{
 		//			Debug.Log(meshX.vertices[i] +":vertex");
@@ -83,7 +88,7 @@ public class Potato : MonoBehaviour {
 	void step1()
 	{
 		#if UNITY_EDITOR
-		Debug.Log("in step 1");
+		//Debug.Log("in step 1");
 		//		for(int i = 0; i < meshX.mesh.vertices.Length; i++)
 		//		{
 		//			Debug.Log(meshX.mesh.vertices[i] +":vertex");
@@ -92,6 +97,7 @@ public class Potato : MonoBehaviour {
 		#endif
 		meshX.mesh.RecalculateNormals();
 		gameObject.GetComponent<MeshFilter>().mesh = meshX.mesh;
+		Debug.Log(timer.Stop() + ":potato took to complete");
 	}
 	// Update is called once per frame
 	void Update () {

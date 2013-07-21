@@ -7,6 +7,8 @@ using System.Diagnostics;
 using System.Net.Mime;
 using System.Collections.Generic;
 using System.Security.Cryptography;
+using System.Net.Configuration;
+using System.Runtime.ConstrainedExecution;
 
 public class MeshXT2{
 	public volatile Mesh mesh;
@@ -16,6 +18,10 @@ public class MeshXT2{
 	public volatile string name;
 	public volatile Vector3[] normals;
 
+	public volatile Texture2D tex;
+	//public volatile Texture3D t3;
+	public bool useTexture= true;//may be set to false later after testing is done
+	public volatile Color[] pixels;// image should be square or things may not work correctly
 	// next step
 	public volatile Face[] faces;
 	public volatile HalfEdge[] hEdges;
@@ -568,7 +574,7 @@ public class MeshXT2{
 	public void CommitToTemp()
 	{
 #if UNITY_EDITOR
-		UnityEngine.Debug.Log("starting commit to temp");
+		//UnityEngine.Debug.Log("starting commit to temp");
 #endif
 		#if UNITY_EDITOR
 
@@ -618,10 +624,38 @@ public class MeshXT2{
 		}
 		name = mesh.name;
 
+		//addition of Texture mod and creation on the fly
+		if(useTexture)
+		{
+			if(tex != null)
+			{
+				var pix = tex.GetPixels();
+				pixels = new Color[pix.Length];
+				for(int i=0;i < pix.Length;i++)
+				{
+					pixels[i] = new Color(pix[i].r, pix[i].g, pix[i].b, pix[i].a);
+				}
+			}
+			else
+			{
+				tex = new Texture2D(512,512);
+				pixels = new Color[512*512];
+			}
+			//covered later
+		}
+		//end of modification
 		t = new Thread(()=>{
 			try{
+//				if(useTexture)
+//				{
+//					if(tex == null)
+//					{
+//						tex = new Texture2D(512,512);
+//						pixels = new Color[512*512];
+//					}
+//				}
 				#if UNITY_EDITOR
-				UnityEngine.Debug.Log("should have called CommitToTempFinished");
+				//UnityEngine.Debug.Log("should have called CommitToTempFinished");
 				#endif
 			CommitToTempFinished();
 			CommitToTempFinished = null;
@@ -643,12 +677,12 @@ public class MeshXT2{
 	public void CommitToMaster()
 	{
 #if UNITY_EDITOR
-		UnityEngine.Debug.Log("starting commit to master");
+		//UnityEngine.Debug.Log("starting commit to master");
 #endif
 
 		internalObj.commands.Add(()=>{
 			#if UNITY_EDITOR
-			UnityEngine.Debug.Log("in Commit to master");
+			//UnityEngine.Debug.Log("in Commit to master");
 //			for(int i = 0; i < vertices.Length; i++)
 //			{
 //				Debug.Log(vertices[i] +":vertex");
@@ -692,53 +726,59 @@ public class MeshXT2{
 			CommitToMasterFinishedOnMain();
 			CommitToMasterFinishedOnMain = null;
 			#if UNITY_EDITOR
-			UnityEngine.Debug.Log("in end on commit to master");
-//			for(int i = 0; i < mesh.vertices.Length; i++)
-//			{
-//				Debug.Log(mesh.vertices[i] +":vertex");
-//			}
-//			Debug.Log("end of vertices");
-//			for(int i =0; i<mesh.triangles.Length; i++)
-//			{
-//				Debug.Log(mesh.triangles[i] + ":triangle");
-//			}
-//			Debug.Log("end of triangles");
+			//UnityEngine.Debug.Log("in end on commit to master");
 			#endif
 		});
 
-//		CommitToMasterFinished();
-//		CommitToMasterFinished = null;
-//
-//		internalObj.commands.Add(()=>{
-//			CommitToMasterFinishedOnMain();
-//			CommitToMasterFinishedOnMain = null;
-//		});
-
 		internalObj.commandReady =true;
 	}
-	//public event nextStepDelegate DefromByNormalDone;
-	/// <summary>
-	/// Deforms the mesh by the normals between the amounts specified
-	/// </summary>
-	/// <param name="min">Minimum.</param>
-	/// <param name="max">Max.</param>
-//	public void DeformByNormal(float min, float max)
+	public void clearTexToBlack()
+	{
+		for(int i =0; i< pixels.Length; i++)
+		{
+			pixels[i] = new Color(0.0f, 0.0f, 0.0f);
+		}
+		//UnityEngine.Debug.Log("clearing pixels");
+		//UnityEngine.Debug.Log(pixels[0] + "pixel 0 after set to red");
+	}
+	public delegate Color getAColorDelegate();
+	public void setPixels(getAColorDelegate function)
+	{
+		for(int i=0; i<pixels.Length;i++)
+		{
+			pixels[i] = function();
+		}
+	}
+	public void seamlessTexGenerator(getAColorDelegate function)
+	{
+		if(hEdges == null)
+			throw new ArgumentNullException(" must have calculated half edges");
+		bool[] done = new bool[hEdges.Length];
+	}
+//	int[] indicesOfUvTriangle(Vector2 uvCoords0, Vector2 uvCoords1, Vector2 uvCoords2)
 //	{
-//		for(int i = 0; i<vertices.Length ;i++)
-//		{
-//			Vector3 temp = normals[i]*gen.NextFloat(min, max);
-//			for(int k=0; k<vertices.Length;k++)
-//			{
-//				if(i == k)
-//					continue;
-//				else if(vertices[i] == vertices[k])
-//				{
-//					vertices[k] += temp;
-//				}
-//			}
-//			vertices[i] += temp;
-//		}
+//		List<int> 
 //	}
+	public void commitPixelsToTex()
+	{
+		//UnityEngine.Debug.Log(pixels[0] +"pixels [0]");
+		int height = tex.height;
+		int width = tex.width;
+
+		Color[] temp = new Color[pixels.Length];
+		for(int i=0; i< temp.Length; i++)
+		{
+			temp[i] = new Color(pixels[i].r, pixels[i].g, pixels[i].b, pixels[i].a);
+		}
+		//UnityEngine.Debug.Log(temp[0] + "temp[0]");
+		//tex = new Texture2D((int)Math.Sqrt(pixels.Length), (int)Math.Sqrt(pixels.Length));
+		tex.SetPixels(temp);
+		tex.Apply();
+//		t3 = new Texture3D(tex.height,tex.width,1, TextureFormat.ARGB32, true);
+//		t3.SetPixels(temp);
+//		t3.Apply();
+		//UnityEngine.Debug.Log(tex.GetPixel(0,0) + "tex 0,0");
+	}
 	/// <summary>
 	/// Deforms the by normal according to the distribution specified
 	/// </summary>
@@ -786,11 +826,6 @@ public class MeshXT2{
 			vertices[i] += temp;
 		}
 	}
-	/// <summary>
-	/// Deforms the by normal clamped between two values
-	/// </summary>
-	/// <param name="min">Minimum.</param>
-	/// <param name="max">Max.</param>
 
 	/// <summary>
 	/// Tesselate this mesh subdivides each triangle in the mesh into 4 triangles
@@ -974,14 +1009,27 @@ public class MeshXT2{
 			UnityEngine.Debug.LogException(e);
 		}
 	}
-	public void ConvexTesselationBridging(float offset)
-	{
-		if(hEdges == null)
-			throw new ArgumentNullException("half edges must be calculated before calling this function");
-		// probably should check that half edges are the latest calculations
-
-
-	}
+	//incomplete
+//	public void ConvexTesselationBridging(float offset)
+//	{
+//		if(hEdges == null)
+//			throw new ArgumentNullException("half edges must be calculated before calling this function");
+//		// probably should check that half edges are the latest calculations
+//		bool[] done = new bool[triangles.Length];
+//		UnityEngine.Debug.Log(done[0] + ":done defaults to");
+//
+//
+//	}
+//	void internalConvexTesselation(Face face, ref bool[] hedgesDone)
+//	{
+//		for(int i=0; i< face.edges.Length; i++)
+//		{
+//			if(!hedgesDone[face.edges[i]])
+//			{
+//
+//			}
+//		}
+//	}
 	public void RecalaculateNormals()
 	{
 		for(int i=0; i< (triangles.Length/3); i++)

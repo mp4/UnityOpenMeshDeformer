@@ -37,11 +37,11 @@ public class decTreeTest
 		//tree.EvaluteTree();
 		tree.EvaluateTree();
 	}
-	void aCalled()
+	void aCalled(VariableNode node)
 	{
 		Debug.Log("a called");
 	}
-	void bCalled()
+	void bCalled(VariableNode node)
 	{
 		Debug.Log("b called");
 	}

@@ -18,7 +18,7 @@ public class MeshXTinternal : MonoBehaviour {
 		if(commandReady)
 		{
 #if UNITY_EDITOR
-			Debug.Log("internal running command(s) on main");
+			//Debug.Log("internal running command(s) on main");
 #endif
 			lock(commands)
 			{
