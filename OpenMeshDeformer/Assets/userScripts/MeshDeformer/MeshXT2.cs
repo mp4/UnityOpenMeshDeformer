@@ -755,6 +755,55 @@ public class MeshXT2{
 			throw new ArgumentNullException(" must have calculated half edges");
 		bool[] done = new bool[hEdges.Length];
 	}
+	public void changeAllEdgesTo(getAColorDelegate function)
+	{
+
+	}
+	public void mergeAllEdgesWithFirst()
+	{
+
+	}
+	public void uvToSphericalCoords()
+	{
+		for(int i=0; i< uv.Length; i++)
+		{
+			uv[i] = new Vector2(0.5f + Mathf.Atan2(vertices[i].z, vertices[i].x)/(2.0f*Mathf.PI),
+			                    0.5f - 2.0f*Mathf.Asin(vertices[i].y)/(2.0f*Mathf.PI));
+		}
+	}
+	public void uvTofourCubesCoords()
+	{
+		for(int i=0; i< uv.Length; i++)
+		{
+			uv[i] = new Vector2((Mathf.Asin(vertices[i].z) + Mathf.Asin(vertices[i].x))/Mathf.PI,
+			                    (Mathf.Asin(vertices[i].y) +Mathf.Asin(vertices[i].x))/(Mathf.PI));
+		}
+	}
+	public void uvToNbuCoords()
+	{
+		for(int i=0; i< uv.Length; i++)
+		{
+			uv[i] = new Vector2(2.0f*(Mathf.Asin(vertices[i].z)/3.0f + Mathf.Asin(vertices[i].x)/3.0f + Mathf.Asin(vertices[i].y/3.0f))/Mathf.PI,
+			                    2.0f*(Mathf.Asin(vertices[i].y)/3.0f +Mathf.Asin(vertices[i].x)/3.0f +Mathf.Asin(vertices[i].z/3.0f))/(Mathf.PI));
+		}
+	}
+	List<int> hedgePixels(HalfEdge hEdge)
+	{
+		List<int> indices = new List<int>();
+		var uv1 = uv[hEdge.first_];
+		var uv2 = uv[hEdge.second_];
+
+		var x1 = (int)uv1.x * tex.width;
+		var y1 = (int)uv1.y * tex.height;
+
+		var x2 = (int)uv2.x * tex.width;
+		var y2 = (int)uv2.y * tex.height;
+
+		float xdist = Math.Max(x1, x2) - Math.Min(x1, x2);
+		float ydist = Math.Max(y1, y2) - Math.Min(y1,y2);
+
+		return indices;
+	}
 //	int[] indicesOfUvTriangle(Vector2 uvCoords0, Vector2 uvCoords1, Vector2 uvCoords2)
 //	{
 //		List<int> 

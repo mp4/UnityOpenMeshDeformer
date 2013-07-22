@@ -77,6 +77,7 @@ public class LsysOperation : VariableTransformation
 			//done building variable nodes
 			//now replace nodes end to start
 
+			//add transformaaion code here
 			for(int i=indices.Count -1; i >=0; i--)
 			{
 				variables.RemoveRange(i, fromThis.Count);

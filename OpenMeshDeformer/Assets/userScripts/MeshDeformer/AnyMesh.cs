@@ -65,6 +65,7 @@ public class AnyMesh : MonoBehaviour {
 //#if UNITY_EDITOR
 //		Debug.Log("step 0");
 //#endif
+
 		meshX.Tesselate();
 		meshX.Tesselate();
 		meshX.Tesselate();
@@ -83,6 +84,9 @@ public class AnyMesh : MonoBehaviour {
 				meshX.currentGenerator.NextBoolean()? 0.75f: 0.25f
 				//(float)meshX.currentDistribution.NextDouble()
 				);});
+		//meshX.uvToSphericalCoords();
+		//meshX.uvTofourCubesCoords();
+		meshX.uvToNbuCoords();
 		meshX.CommitToMasterFinishedOnMain += step1;
 		meshX.CommitToMaster();
 	}
