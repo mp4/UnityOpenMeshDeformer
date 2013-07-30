@@ -55,6 +55,7 @@
      <None Include="Assets\Standard Assets\Projectors\Sources\Shaders\Projector Multiply.shader" />
      <None Include="Assets\Shaders\Lightmap Shaders (Legacy)\Mobile Lightmap AlphaTest.shader" />
      <None Include="Assets\Shaders\Miscellaneous Shaders\Mobile Detail.shader" />
+     <None Include="Assets\userScripts\proceeduraltextures\ThreeBlitShader.shader" />
      <None Include="Assets\voxelizer\README.txt" />
      <None Include="Assets\Shaders\Builtins\Internal-Halo.shader" />
      <None Include="Assets\Shaders\Builtins\Decal.shader" />
@@ -81,8 +82,9 @@
      <None Include="Assets\Standard Assets\Projectors\Sources\Shaders\Projector Light.shader" />
      <None Include="Assets\Standard Assets\Water (Basic)\Sources\Shaders\FX-Water Simple.shader" />
      <None Include="Assets\Shaders\Builtins\difuse\Alpha-Parallax.shader" />
-     <None Include="Assets\userScripts\proceeduraltextures\XYshader.shader" />
+     <None Include="Assets\userScripts\proceeduraltextures\OneBlitshader.shader" />
      <None Include="Assets\Shaders\custom\CgLambert.shader" />
+     <None Include="Assets\userScripts\proceeduraltextures\TwoBlitShader.shader" />
      <None Include="Assets\Shaders\Normal-Diffuse.shader" />
      <None Include="Assets\Shaders\Builtins\unlit\Unlit-AlphaTest.shader" />
      <None Include="Assets\Shaders\Builtins\difuse\FlippedNormalsDifuse.shader" />

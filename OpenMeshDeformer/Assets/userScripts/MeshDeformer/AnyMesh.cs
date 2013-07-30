@@ -105,8 +105,10 @@ public class AnyMesh : MonoBehaviour {
 		gameObject.GetComponent<MeshFilter>().mesh = meshX.mesh;
 		meshX.commitPixelsToTex();
 
-		//gameObject.GetComponent<MeshRenderer>().material.SetTexture("Base (RGB)", meshX.tex);
-		gameObject.GetComponent<MeshRenderer>().material.mainTexture = meshX.tex;
+		gameObject.GetComponent<MeshRenderer>().material.SetTexture("_MainTex", meshX.tex);
+		gameObject.GetComponent<MeshRenderer>().material.SetTexture("_SecondaryTex", meshX.tex);
+		gameObject.GetComponent<MeshRenderer>().material.SetTexture("_TertiaryTex", meshX.tex);
+		//gameObject.GetComponent<MeshRenderer>().material.mainTexture = meshX.tex;
 		Debug.Log(timer.Stop() + ":any mesh took <- seconds to complete");
 		Debug.Log(meshX.tex.GetPixel(0,0) + "pixel 0,0 after assignment");
 		transform.localScale = new Vector3(meshX.scale,meshX.scale,meshX.scale);
