@@ -86,7 +86,8 @@ public class AnyMesh : MonoBehaviour {
 				);});
 		//meshX.uvToSphericalCoords();
 		//meshX.uvTofourCubesCoords();
-		meshX.uvToNbuCoords();
+		//meshX.uvToNbuCoords();
+		meshX.xyzLT1();
 		meshX.CommitToMasterFinishedOnMain += step1;
 		meshX.CommitToMaster();
 	}
@@ -108,6 +109,7 @@ public class AnyMesh : MonoBehaviour {
 		gameObject.GetComponent<MeshRenderer>().material.mainTexture = meshX.tex;
 		Debug.Log(timer.Stop() + ":any mesh took <- seconds to complete");
 		Debug.Log(meshX.tex.GetPixel(0,0) + "pixel 0,0 after assignment");
+		transform.localScale = new Vector3(meshX.scale,meshX.scale,meshX.scale);
 		//renderer.material.mainTexture =meshX.tex;
 		//Debug.Log(gameObject.GetComponent<MeshRenderer>().material.mainTexture)
 		//gameObject.GetComponent<MeshRenderer>().materials[0].SetTexture("", meshX.tex);

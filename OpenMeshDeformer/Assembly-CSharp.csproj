@@ -18,7 +18,7 @@
 	<DebugType>full</DebugType>
 	<Optimize>false</Optimize>
 	<OutputPath>Temp\bin\Debug\</OutputPath>
-	<DefineConstants>DEBUG;TRACE;UNITY_ANDROID;ENABLE_MICROPHONE;ENABLE_IMAGEEFFECTS;ENABLE_WEBCAM;ENABLE_AUDIO_FMOD;ENABLE_NETWORK;ENABLE_MONO;ENABLE_PHYSICS;ENABLE_TERRAIN;ENABLE_CACHING;ENABLE_SUBSTANCE;ENABLE_GENERICS;UNITY_ANDROID_API;ENABLE_CLOTH;ENABLE_AUDIO;ENABLE_WWW;ENABLE_SHADOWS;UNITY_4_1_5;UNITY_4_1;ENABLE_PROFILER;UNITY_EDITOR</DefineConstants>
+	<DefineConstants>DEBUG;TRACE;UNITY_ANDROID;ENABLE_MICROPHONE;ENABLE_TEXTUREID_MAP;ENABLE_AUDIO_FMOD;ENABLE_MONO;ENABLE_TERRAIN;ENABLE_SUBSTANCE;ENABLE_GENERICS;ENABLE_WWW;ENABLE_IMAGEEFFECTS;ENABLE_WEBCAM;RENDER_SOFTWARE_CURSOR;ENABLE_NETWORK;ENABLE_PHYSICS;ENABLE_CACHING;ENABLE_CLOTH;UNITY_ANDROID_API;ENABLE_SHADOWS;ENABLE_AUDIO;ENABLE_SINGLE_INSTANCE_BUILD_SETTING;UNITY_4_2_0;UNITY_4_2;ENABLE_PROFILER;UNITY_EDITOR;UNITY_EDITOR_WIN</DefineConstants>
 	<ErrorReport>prompt</ErrorReport>
 	<WarningLevel>4</WarningLevel>
 	<NoWarn>0169</NoWarn>
@@ -59,13 +59,58 @@
      <Compile Include="Assets\voxelizer\QuickVoxelSwitcher.cs" />
      <Compile Include="Assets\voxelizer\Voxelizer.cs" />
      <None Include="Assets\Standard Assets\Projectors\Guidelines.txt" />
+     <None Include="Assets\Shaders\custom\CGForcefield.shader" />
+     <None Include="Assets\Shaders\custom\cgDualtexture.shader" />
      <None Include="Assets\Standard Assets\Projectors\Sources\Shaders\Projector Multiply.shader" />
+     <None Include="Assets\Shaders\Lightmap Shaders (Legacy)\Mobile Lightmap AlphaTest.shader" />
+     <None Include="Assets\Shaders\Miscellaneous Shaders\Mobile Detail.shader" />
      <None Include="Assets\voxelizer\README.txt" />
+     <None Include="Assets\Shaders\Builtins\Internal-Halo.shader" />
+     <None Include="Assets\Shaders\Builtins\Decal.shader" />
+     <None Include="Assets\Shaders\Lightmap Shaders (Legacy)\Mobile Lightmap Reflective.shader" />
+     <None Include="Assets\Shaders\Builtins\difuse\Illumin-Bumped.shader" />
+     <None Include="Assets\Shaders\Vertex Colored Shaders\Mobile Transparent Vertex Color.shader" />
+     <None Include="Assets\Shaders\custom\MaxOptions.shader" />
+     <None Include="Assets\Shaders\custom\backGroundFlippedNormals.shader" />
+     <None Include="Assets\Shaders\Builtins\difuse\AlphaTest-Bumped.shader" />
+     <None Include="Assets\Shaders\Builtins\unlit\Unlit-NormalsFlippedTexture.shader" />
      <None Include="Assets\Standard Assets\Tessellation Shaders\BumpedSpecularSmooth.shader" />
      <None Include="Assets\Standard Assets\Particles\Sources\Shaders\Particle Alpha Blend (Queue +100).shader" />
+     <None Include="Assets\Shaders\custom\difuseFlippedNormals.shader" />
+     <None Include="Assets\Shaders\Builtins\difuse\Alpha-Diffuse.shader" />
+     <None Include="Assets\Shaders\Miscellaneous Shaders\Mobile Background.shader" />
+     <None Include="Assets\Shaders\custom\CgLambertAmbient.shader" />
+     <None Include="Assets\Shaders\Builtins\unlit\Unlit-Alpha.shader" />
+     <None Include="Assets\Shaders\custom\ForceField.shader" />
+     <None Include="Assets\Shaders\Builtins\Alpha-VertexLit.shader" />
+     <None Include="Assets\Shaders\custom\cgTexture.shader" />
+     <None Include="Assets\Shaders\Builtins\Skybox.shader" />
+     <None Include="Assets\Shaders\custom\CgFlippedNormals.shader" />
+     <None Include="Assets\Shaders\custom\cgTest.shader" />
      <None Include="Assets\Standard Assets\Projectors\Sources\Shaders\Projector Light.shader" />
      <None Include="Assets\Standard Assets\Water (Basic)\Sources\Shaders\FX-Water Simple.shader" />
+     <None Include="Assets\Shaders\Builtins\difuse\Alpha-Parallax.shader" />
+     <None Include="Assets\userScripts\proceeduraltextures\XYshader.shader" />
+     <None Include="Assets\Shaders\custom\CgLambert.shader" />
+     <None Include="Assets\Shaders\Normal-Diffuse.shader" />
+     <None Include="Assets\Shaders\Builtins\unlit\Unlit-AlphaTest.shader" />
+     <None Include="Assets\Shaders\Builtins\difuse\FlippedNormalsDifuse.shader" />
+     <None Include="Assets\Shaders\Builtins\difuse\Illumin-Diffuse.shader" />
+     <None Include="Assets\Shaders\Builtins\difuse\Alpha-Bumped.shader" />
+     <None Include="Assets\Shaders\custom\basicGlSL.shader" />
+     <None Include="Assets\Shaders\Builtins\unlit\Unlit-Normal.shader" />
+     <None Include="Assets\Shaders\Lightmap Shaders (Legacy)\Mobile Lightmap Only.shader" />
+     <None Include="Assets\Shaders\Builtins\Alpha-BumpSpec.shader" />
+     <None Include="Assets\Shaders\custom\cgDataField.shader" />
+     <None Include="Assets\Shaders\Builtins\Flare.shader" />
+     <None Include="Assets\Shaders\Particle Shaders\Mobile Multiply Culled.shader" />
+     <None Include="Assets\Shaders\Vertex Colored Shaders\Mobile Vertex Colored.shader" />
+     <None Include="Assets\Shaders\Builtins\Alpha-Glossy.shader" />
+     <None Include="Assets\Shaders\Particle Shaders\Mobile Particles Additive Culled.shader" />
      <None Include="Assets\Standard Assets\Tessellation Shaders\BumpedSpecularDisplacement.shader" />
+     <None Include="Assets\Shaders\Builtins\unlit\UnlitNormalsFlipped.shader" />
+     <None Include="Assets\Shaders\custom\Cgbasic.shader" />
+     <None Include="Assets\Shaders\Builtins\unlit\Unlit-AlphaOverlay.shader" />
  <Reference Include="Troschuetz.Random">
  <HintPath>Assets\userScripts\MeshDeformer\Troschuetz.Random.dll</HintPath>
  </Reference>

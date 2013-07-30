@@ -18,6 +18,7 @@ public class MeshXT2{
 	public volatile string name;
 	public volatile Vector3[] normals;
 
+	public volatile float scale = 1.0f;
 	public volatile Texture2D tex;
 	//public volatile Texture3D t3;
 	public bool useTexture= true;//may be set to false later after testing is done
@@ -563,6 +564,26 @@ public class MeshXT2{
 		default:
 			throw new NotImplementedException("the distribution you want has not yet been implemented "+
 			                                  "you could help everyone out by going and implementing it");
+		}
+	}
+	/// <summary>
+	/// sets x y z of all vertices to less than or equal to 1.0f
+	/// and sets the scale variable if all are less than one sets the
+	/// largest to one and readjusts all of the others accordingly and
+	/// sets the scale approprately
+	/// </summary>
+	public void xyzLT1()
+	{
+		var max = Vector3.Magnitude(vertices[0]);
+		for(int i=1; i< vertices.Length;i++)
+		{
+			if(Vector3.Magnitude(vertices[i]) > max)
+				max = Vector3.Magnitude(vertices[i]);
+		}
+		scale = max;
+		for(int i=0;i<vertices.Length;i++)
+		{
+			vertices[i] = vertices[i]/max;
 		}
 	}
 	/// <summary>
