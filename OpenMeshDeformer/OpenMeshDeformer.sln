@@ -5,6 +5,8 @@ Project("{D2199238-378E-E655-DC88-975575D5AAC3}") = "OpenMeshDeformer", "Assembl
 EndProject
 Project("{D2199238-378E-E655-DC88-975575D5AAC3}") = "OpenMeshDeformer", "Assembly-CSharp.csproj", "{4A2B2292-3C3F-3E73-9F06-EA86FF926AEB}"
 EndProject
+Project("{D2199238-378E-E655-DC88-975575D5AAC3}") = "OpenMeshDeformer", "Assembly-CSharp-Editor.csproj", "{C528748B-24C2-62AB-F102-31E7003DECE5}"
+EndProject
 Project("{D2199238-378E-E655-DC88-975575D5AAC3}") = "OpenMeshDeformer", "Assembly-UnityScript-firstpass.unityproj", "{EFCEC462-ED23-5571-030E-138AF9F33A09}"
 EndProject
 Global
@@ -21,6 +23,10 @@ Global
 		{4A2B2292-3C3F-3E73-9F06-EA86FF926AEB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4A2B2292-3C3F-3E73-9F06-EA86FF926AEB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4A2B2292-3C3F-3E73-9F06-EA86FF926AEB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C528748B-24C2-62AB-F102-31E7003DECE5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C528748B-24C2-62AB-F102-31E7003DECE5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C528748B-24C2-62AB-F102-31E7003DECE5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C528748B-24C2-62AB-F102-31E7003DECE5}.Release|Any CPU.Build.0 = Release|Any CPU
 		{EFCEC462-ED23-5571-030E-138AF9F33A09}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{EFCEC462-ED23-5571-030E-138AF9F33A09}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EFCEC462-ED23-5571-030E-138AF9F33A09}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -29,7 +35,7 @@ Global
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
-																																																										GlobalSection(MonoDevelopProperties) = preSolution
+																																																													GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = Assembly-CSharp.csproj
 		Policies = $0
 		$0.TextStylePolicy = $1
