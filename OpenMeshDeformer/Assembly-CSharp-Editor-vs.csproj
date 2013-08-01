@@ -45,6 +45,7 @@
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\Editor\OpenInNpp.cs" />
+     <Compile Include="Assets\Editor\UpdateProjectFilesToNet4.cs" />
      <None Include="Assets\Standard Assets\Projectors\Guidelines.txt" />
      <None Include="Assets\Standard Assets\Projectors\Sources\Shaders\Projector Multiply.shader" />
      <None Include="Assets\userScripts\proceeduraltextures\ThreeBlitShader.shader" />

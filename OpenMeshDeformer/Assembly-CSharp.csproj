@@ -10,7 +10,7 @@
 	<AppDesignerFolder>Properties</AppDesignerFolder>
 	<RootNamespace></RootNamespace>
 	<AssemblyName>Assembly-CSharp</AssemblyName>
-	<TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+	<TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
 	<FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -53,6 +53,7 @@
      <Compile Include="Assets\userScripts\MeshDeformer\MeshXT2.cs" />
      <Compile Include="Assets\userScripts\MeshDeformer\MeshXTinternal.cs" />
      <Compile Include="Assets\userScripts\MeshDeformer\Potato.cs" />
+     <Compile Include="Assets\userScripts\utilities\LoadSave.cs" />
      <Compile Include="Assets\userScripts\utilities\MathXT.cs" />
      <Compile Include="Assets\userScripts\utilities\Timer.cs" />
      <Compile Include="Assets\voxelizer\FastStaticVoxleizer.cs" />
